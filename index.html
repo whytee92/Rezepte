@@ -4,23 +4,66 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content="Saftiger Apfel-Streusel-Blechkuchen mit knusprigen Streuseln - das optimierte Rezept mit Profi-Tipps">
+<meta name="theme-color" content="#c07a2c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Apfel-Streusel-Blechkuchen – Optimiertes Rezept</title>
 <style>
   :root{
     --accent:#c07a2c;
     --accent-dark:#9a5f1f;
+    --accent-light:#e8a85c;
     --bg:#faf7f2;
+    --bg-dark:#f5f0e8;
     --ink:#222;
     --border:#eee3d4;
     --shadow:rgba(0,0,0,.035);
+    --success:#4CAF50;
+    --radius:16px;
   }
+  
   *{box-sizing:border-box}
+  
   body{
     margin:0;
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell, Noto Sans, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell, Noto Sans, Arial, sans-serif;
     line-height:1.6;
     color:var(--ink);
     background:var(--bg);
+    scroll-behavior: smooth;
+  }
+  
+  /* Loading Animation */
+  .loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s, visibility 0.5s;
+  }
+  
+  .loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .loader-inner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
   
   /* Skip to content link for accessibility */
@@ -33,235 +76,515 @@
     padding: 8px;
     text-decoration: none;
     z-index: 100;
+    border-radius: 0 0 8px 0;
   }
   .skip-link:focus {
     top: 0;
   }
   
+  /* Header Styles */
   header{
     background:linear-gradient(135deg, #f5e6d8, #fff);
     border-bottom:1px solid var(--border);
     padding:2rem 1rem;
     text-align:center;
+    position: relative;
+    overflow: hidden;
   }
+  
+  header::before {
+    content: "🍎";
+    position: absolute;
+    font-size: 150px;
+    opacity: 0.05;
+    top: -30px;
+    left: -30px;
+    transform: rotate(-15deg);
+  }
+  
+  header::after {
+    content: "🍰";
+    position: absolute;
+    font-size: 150px;
+    opacity: 0.05;
+    bottom: -30px;
+    right: -30px;
+    transform: rotate(15deg);
+  }
+  
   h1{
     margin:0;
     font-size:clamp(1.6rem, 2.8vw, 2.4rem);
     letter-spacing:.3px;
+    position: relative;
   }
+  
+  /* Main Content */
   main{
     max-width:900px;
     margin:0 auto;
     padding:2rem 1rem 4rem;
   }
+  
   .grid{
     display:grid;
     grid-template-columns:1fr;
     gap:1.25rem;
   }
+  
   @media(min-width:880px){
     .grid{grid-template-columns:1.2fr .8fr}
   }
+  
   section{
     background:#fff;
     border:1px solid var(--border);
-    border-radius:16px;
+    border-radius:var(--radius);
     padding:1.25rem;
     box-shadow:0 4px 12px var(--shadow);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
+  
   section:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0,0,0,.055);
   }
+  
   h2{
     margin-top:0;
     color:var(--accent);
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-size: 1.5rem;
   }
+  
   h2::before {
     content: "";
     display: inline-block;
     width: 4px;
     height: 1.2em;
-    background: var(--accent);
+    background: linear-gradient(to bottom, var(--accent), var(--accent-light));
     border-radius: 2px;
   }
+  
   h3 {
     color: var(--accent-dark);
     font-size: 1.1rem;
     margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-  }
-  ul, ol{padding-left:1.2rem}
-  li {
-    margin-bottom: 0.5rem;
-  }
-  .tips li{
-    margin-bottom:.35rem;
-    position: relative;
-    padding-left: 0.5rem;
-  }
-  .tips li::marker {
-    content: "✓ ";
-    color: var(--accent);
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 2px dotted var(--border);
   }
   
-  /* Ingredients highlighting */
+  /* Timer Section */
+  .timer-section {
+    background: linear-gradient(135deg, #fff0da, #fffaf4);
+    border: 2px solid var(--accent-light);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    text-align: center;
+  }
+  
+  .timer-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--accent-dark);
+    font-variant-numeric: tabular-nums;
+  }
+  
+  .timer-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .timer-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  
+  .timer-btn:hover {
+    background: var(--accent-dark);
+    transform: scale(1.05);
+  }
+  
+  .timer-btn:active {
+    transform: scale(0.98);
+  }
+  
+  .timer-btn.stop {
+    background: #f44336;
+  }
+  
+  /* Progress Bar */
+  .progress-container {
+    background: var(--bg-dark);
+    border-radius: 999px;
+    padding: 3px;
+    margin: 1rem 0;
+  }
+  
+  .progress-bar {
+    height: 8px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: 999px;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  
+  /* Servings Calculator */
+  .servings-calc {
+    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+    border: 1px solid #a5d6a7;
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  .servings-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .servings-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: white;
+    color: var(--accent);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  
+  .servings-btn:hover {
+    background: var(--accent);
+    color: white;
+    transform: scale(1.1);
+  }
+  
+  .servings-display {
+    font-size: 1.3rem;
+    font-weight: bold;
+    min-width: 100px;
+    text-align: center;
+  }
+  
+  /* Ingredients List */
+  .ingredient-list {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .ingredient-list li {
+    display: flex;
+    align-items: center;
+    padding: 0.6rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .ingredient-list li:hover {
+    background: var(--bg-dark);
+    transform: translateX(5px);
+  }
+  
+  .ingredient-list input[type="checkbox"] {
+    margin-right: 0.8rem;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--accent);
+  }
+  
+  .ingredient-list input[type="checkbox"]:checked + label {
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
+  
+  .ingredient-list label {
+    cursor: pointer;
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  
   .ingredient-amount {
     font-weight: 600;
     color: var(--accent-dark);
+    min-width: 60px;
+    transition: all 0.3s;
   }
   
+  .original-amount {
+    font-size: 0.85rem;
+    color: #999;
+    margin-left: 0.3rem;
+  }
+  
+  /* Step Cards */
+  ol.steps {
+    counter-reset: step-counter;
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  ol.steps li {
+    counter-increment: step-counter;
+    position: relative;
+    padding: 1.2rem 1.2rem 1.2rem 3.5rem;
+    margin-bottom: 1rem;
+    background: var(--bg-dark);
+    border-radius: 12px;
+    border-left: 4px solid var(--accent);
+    transition: all 0.2s;
+  }
+  
+  ol.steps li:hover {
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transform: translateX(5px);
+  }
+  
+  ol.steps li::before {
+    content: counter(step-counter);
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--accent);
+    color: white;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  
+  ol.steps li.completed {
+    opacity: 0.6;
+    border-left-color: var(--success);
+  }
+  
+  ol.steps li.completed::before {
+    content: "✓";
+    background: var(--success);
+  }
+  
+  /* Image Gallery */
   figure{
-    margin:0;
+    margin:0 0 1rem 0;
     border-radius:14px;
     overflow:hidden;
     border:1px solid var(--border);
     background:#fff;
+    transition: transform 0.2s;
   }
+  
+  figure:hover {
+    transform: scale(1.02);
+  }
+  
   figure img{
     display:block;
     width:100%;
     height:auto;
     aspect-ratio: 16/10;
     object-fit: cover;
+    cursor: zoom-in;
   }
+  
   figure figcaption{
-    padding:.6rem .8rem;
+    padding:.8rem 1rem;
     font-size:.95rem;
-    background:#fffaf4;
+    background:linear-gradient(to right, #fffaf4, #fff);
     border-top:1px solid var(--border);
   }
+  
+  /* Image Lightbox */
+  .lightbox {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    animation: fadeIn 0.3s;
+  }
+  
+  .lightbox.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+  }
+  
+  .lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .lightbox-close:hover {
+    color: var(--accent-light);
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  /* Badge */
   .badge{
     display:inline-block;
-    background:#fff0da;
+    background:linear-gradient(135deg, #fff0da, #ffe4bc);
     color:#7a4b0f;
     border:1px solid #f0d1a8;
-    padding:.1rem .5rem;
+    padding:.2rem .6rem;
     border-radius:999px;
     font-size:.85rem;
     margin-left:.35rem;
-    animation: pulse 2s infinite;
+    animation: pulse 3s infinite;
   }
+  
   @keyframes pulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
   }
-  .print-note{
-    font-size:.9rem;
-    color:#555;
-    text-align: center;
-    margin-top: 1rem;
-  }
-  .byline{opacity:.75; font-size:.95rem}
+  
+  /* Meta Info */
   .meta{
     display:flex; 
     gap:.8rem; 
     flex-wrap:wrap; 
-    margin-top:.25rem;
+    margin-top:1rem;
     justify-content: center;
   }
+  
   .meta div{
     background:#fff; 
-    border:1px solid var(--border); 
+    border:2px solid var(--border); 
     border-radius:999px; 
-    padding:.3rem .8rem;
+    padding:.4rem 1rem;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.4rem;
+    transition: all 0.2s;
   }
+  
+  .meta div:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  
   .meta div::before {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
   }
+  
   .meta div:nth-child(1)::before { content: "📐"; }
   .meta div:nth-child(2)::before { content: "⏱️"; }
   .meta div:nth-child(3)::before { content: "👩‍🍳"; }
   
-  /* Quick info box */
+  /* Quick Info Box */
   .quick-info {
     background: linear-gradient(135deg, #fff0da, #fffaf4);
-    border: 1px solid var(--border);
+    border: 2px solid var(--accent-light);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 1.2rem;
     margin: 1.5rem 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 1rem;
     text-align: center;
   }
+  
   .quick-info div {
     font-size: 0.9rem;
+    transition: transform 0.2s;
   }
+  
+  .quick-info div:hover {
+    transform: scale(1.1);
+  }
+  
   .quick-info strong {
     display: block;
     color: var(--accent);
-    font-size: 1.1rem;
-  }
-  
-  /* Interactive checklist for ingredients */
-  .ingredient-list {
-    list-style: none;
-    padding-left: 0;
-  }
-  .ingredient-list li {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: background 0.2s;
-  }
-  .ingredient-list li:hover {
-    background: #fffaf4;
-  }
-  .ingredient-list input[type="checkbox"] {
-    margin-right: 0.8rem;
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-  }
-  .ingredient-list input[type="checkbox"]:checked + label {
-    text-decoration: line-through;
-    opacity: 0.6;
-  }
-  .ingredient-list label {
-    cursor: pointer;
-    flex: 1;
-  }
-  
-  /* Step numbers */
-  ol.steps {
-    counter-reset: step-counter;
-    list-style: none;
-    padding-left: 0;
-  }
-  ol.steps li {
-    counter-increment: step-counter;
-    position: relative;
-    padding-left: 3rem;
-    margin-bottom: 1.2rem;
-    min-height: 2.5rem;
-  }
-  ol.steps li::before {
-    content: counter(step-counter);
-    position: absolute;
-    left: 0;
-    top: 0;
-    background: var(--accent);
-    color: white;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 1.2rem;
     font-weight: bold;
   }
   
-  /* Print button */
-  .print-btn {
+  /* Tips Section */
+  .tips {
+    background: linear-gradient(135deg, #f0f9ff, #e6f3ff);
+    border: 2px solid #90cdf4;
+  }
+  
+  .tips h2::before {
+    background: linear-gradient(to bottom, #3b82f6, #60a5fa);
+  }
+  
+  .tips ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .tips li {
+    position: relative;
+    padding-left: 2rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .tips li::before {
+    content: "💡";
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+  
+  .btn {
     background: var(--accent);
     color: white;
     border: none;
@@ -269,58 +592,310 @@
     border-radius: 999px;
     cursor: pointer;
     font-size: 1rem;
-    margin: 1rem auto;
-    display: block;
-    transition: background 0.2s;
-  }
-  .print-btn:hover {
-    background: var(--accent-dark);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+    text-decoration: none;
   }
   
+  .btn:hover {
+    background: var(--accent-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  .btn:active {
+    transform: scale(0.98);
+  }
+  
+  .btn-print {
+    background: #4CAF50;
+  }
+  
+  .btn-print:hover {
+    background: #45a049;
+  }
+  
+  .btn-share {
+    background: #2196F3;
+  }
+  
+  .btn-share:hover {
+    background: #0b7dda;
+  }
+  
+  /* Rating System */
+  .rating {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #fffaf0, #fff5e6);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  
+  .rating h3 {
+    margin-top: 0;
+    color: var(--accent);
+    border: none;
+  }
+  
+  .stars {
+    font-size: 2rem;
+    cursor: pointer;
+  }
+  
+  .stars span {
+    color: #ddd;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+  
+  .stars span:hover,
+  .stars span.active {
+    color: #ffc107;
+  }
+  
+  .rating-text {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  /* Notes Section */
+  .notes-section {
+    background: linear-gradient(135deg, #fff9e6, #fffef5);
+    border: 2px solid #ffd54f;
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  .notes-section h3 {
+    margin-top: 0;
+    color: var(--accent);
+    border: none;
+  }
+  
+  .notes-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 0.95rem;
+  }
+  
+  .notes-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(192, 122, 44, 0.1);
+  }
+  
+  /* Footer */
   footer{
     text-align:center;
     color:#666;
     padding:2rem 1rem 3rem;
-    border-top: 1px solid var(--border);
+    border-top: 2px solid var(--border);
     margin-top: 3rem;
+    background: linear-gradient(to bottom, transparent, var(--bg-dark));
   }
   
-  /* Dark mode support */
+  footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  
+  footer a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Toast Notifications */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent-dark);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    max-width: 300px;
+  }
+  
+  .toast.show {
+    transform: translateX(0);
+  }
+  
+  /* Dark Mode Support */
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #1a1814;
+      --bg-dark: #141210;
       --ink: #f0e8d8;
       --border: #3a352c;
-      --shadow: rgba(0,0,0,.2);
+      --shadow: rgba(0,0,0,.3);
     }
+    
     section, .meta div {
       background: #252119;
     }
+    
     header {
       background: linear-gradient(135deg, #2a251f, #1a1814);
     }
+    
     figure img {
       opacity: 0.9;
     }
+    
     figure figcaption {
-      background: #2a251f;
+      background: linear-gradient(to right, #2a251f, #252119);
     }
+    
     .quick-info {
       background: linear-gradient(135deg, #2a251f, #252119);
     }
+    
+    .timer-section {
+      background: linear-gradient(135deg, #2a251f, #252119);
+    }
+    
+    .servings-calc {
+      background: linear-gradient(135deg, #1e251f, #252119);
+    }
+    
+    .notes-section {
+      background: linear-gradient(135deg, #2a251f, #252119);
+    }
+    
+    .rating {
+      background: linear-gradient(135deg, #2a251f, #252119);
+    }
+    
+    ol.steps li {
+      background: #2a251f;
+    }
+    
+    ol.steps li:hover {
+      background: #322a20;
+    }
+    
+    .tips {
+      background: linear-gradient(135deg, #1a2332, #1f2937);
+    }
+    
+    .ingredient-list li:hover {
+      background: #2a251f;
+    }
+    
+    .notes-textarea {
+      background: #2a251f;
+      color: var(--ink);
+      border-color: var(--border);
+    }
   }
   
+  /* Print Styles */
   @media print{
-    header{border:0; background:#fff; padding:0 0 1rem}
-    section, figure{box-shadow:none; transform: none;}
-    section:hover { transform: none; }
-    .print-btn, .print-note{display:none}
-    .ingredient-list input[type="checkbox"] { display: none; }
-    .ingredient-list label { padding-left: 1rem; }
+    header{
+      border:0; 
+      background:#fff; 
+      padding:0 0 1rem;
+    }
+    
+    header::before,
+    header::after {
+      display: none;
+    }
+    
+    section, figure{
+      box-shadow:none; 
+      transform: none;
+      page-break-inside: avoid;
+    }
+    
+    section:hover { 
+      transform: none; 
+    }
+    
+    .action-buttons, 
+    .toast,
+    .timer-section,
+    .servings-calc,
+    .rating,
+    .notes-section,
+    .lightbox,
+    .loader {
+      display:none;
+    }
+    
+    .ingredient-list input[type="checkbox"] { 
+      display: none; 
+    }
+    
+    .ingredient-list label { 
+      padding-left: 1rem; 
+    }
+    
+    .ingredient-list li:hover {
+      background: none;
+      transform: none;
+    }
+  }
+  
+  /* Mobile Optimizations */
+  @media (max-width: 600px) {
+    .quick-info {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .servings-controls {
+      flex-wrap: wrap;
+    }
+    
+    ol.steps li {
+      padding-left: 3rem;
+    }
+    
+    .timer-display {
+      font-size: 2rem;
+    }
+  }
+  
+  /* Accessibility Improvements */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+  
+  /* High Contrast Mode */
+  @media (prefers-contrast: high) {
+    :root {
+      --accent: #8b5a00;
+      --border: #000;
+    }
+    
+    section {
+      border-width: 2px;
+    }
   }
 </style>
 </head>
 <body>
+<div class="loader" id="loader">
+  <div class="loader-inner"></div>
+</div>
+
 <a href="#main" class="skip-link">Zum Hauptinhalt springen</a>
 
 <header>
@@ -338,10 +913,34 @@
     <div><strong>16–20</strong> Portionen</div>
     <div><strong>30 Min</strong> Vorbereitung</div>
     <div><strong>40 Min</strong> Backzeit</div>
-    <div><strong>320 kcal</strong> pro Stück</div>
+    <div><strong>~320 kcal</strong> pro Stück</div>
   </div>
 
-  <button class="print-btn" onclick="window.print()">🖨️ Rezept drucken</button>
+  <div class="action-buttons">
+    <button class="btn btn-print" onclick="window.print()">
+      🖨️ Rezept drucken
+    </button>
+    <button class="btn btn-share" onclick="shareRecipe()">
+      📱 Teilen
+    </button>
+    <button class="btn" onclick="speakRecipe()">
+      🔊 Vorlesen
+    </button>
+  </div>
+
+  <div class="servings-calc">
+    <h3 style="text-align: center; margin-top: 0;">Portionen anpassen</h3>
+    <div class="servings-controls">
+      <button class="servings-btn" onclick="changeServings(-4)">−</button>
+      <div class="servings-display">
+        <span id="servings">16</span> Portionen
+      </div>
+      <button class="servings-btn" onclick="changeServings(4)">+</button>
+    </div>
+    <div style="text-align: center; margin-top: 0.5rem; font-size: 0.85rem; color: #666;">
+      (Mengen werden automatisch angepasst)
+    </div>
+  </div>
 
   <div class="grid">
     <section>
@@ -349,123 +948,212 @@
       
       <h3>Rührteigboden</h3>
       <ul class="ingredient-list">
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing1">
-          <label for="ing1"><span class="ingredient-amount">250 g</span> weiche Butter oder Margarine</label>
+          <label for="ing1">
+            <span class="ingredient-amount" data-base="250" data-unit="g">250 g</span> 
+            weiche Butter oder Margarine
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing2">
-          <label for="ing2"><span class="ingredient-amount">180 g</span> Zucker</label>
+          <label for="ing2">
+            <span class="ingredient-amount" data-base="180" data-unit="g">180 g</span> 
+            Zucker
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing3">
-          <label for="ing3"><span class="ingredient-amount">1 Päckchen</span> Vanillezucker</label>
+          <label for="ing3">
+            <span class="ingredient-amount" data-base="1" data-unit="Pck">1 Päckchen</span> 
+            Vanillezucker
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing4">
-          <label for="ing4"><span class="ingredient-amount">4</span> Eier (Größe M, zimmerwarm)</label>
+          <label for="ing4">
+            <span class="ingredient-amount" data-base="4" data-unit="">4</span> 
+            Eier (Größe M, zimmerwarm)
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing5">
-          <label for="ing5"><span class="ingredient-amount">350 g</span> Mehl (Type 405 oder 550)</label>
+          <label for="ing5">
+            <span class="ingredient-amount" data-base="350" data-unit="g">350 g</span> 
+            Mehl (Type 405 oder 550)
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing6">
-          <label for="ing6"><span class="ingredient-amount">1 Päckchen</span> Backpulver</label>
+          <label for="ing6">
+            <span class="ingredient-amount" data-base="1" data-unit="Pck">1 Päckchen</span> 
+            Backpulver
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing7">
-          <label for="ing7"><span class="ingredient-amount">125 ml</span> Milch, <strong>handwarm</strong></label>
+          <label for="ing7">
+            <span class="ingredient-amount" data-base="125" data-unit="ml">125 ml</span> 
+            Milch, <strong>handwarm</strong>
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing8">
-          <label for="ing8"><span class="ingredient-amount">1 Prise</span> Salz</label>
+          <label for="ing8">
+            <span class="ingredient-amount" data-base="1" data-unit="Prise">1 Prise</span> 
+            Salz
+          </label>
         </li>
       </ul>
 
       <h3>Belag</h3>
       <ul class="ingredient-list">
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing9">
-          <label for="ing9"><span class="ingredient-amount">1,2–1,5 kg</span> backfeste Äpfel (z. B. Boskop, Elstar)</label>
+          <label for="ing9">
+            <span class="ingredient-amount" data-base="1.2" data-unit="kg">1,2 kg</span> 
+            backfeste Äpfel (z. B. Boskop, Elstar)
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing10">
-          <label for="ing10"><span class="ingredient-amount">½</span> Zitrone (Saft)</label>
+          <label for="ing10">
+            <span class="ingredient-amount" data-base="0.5" data-unit="">½</span> 
+            Zitrone (Saft)
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing11">
-          <label for="ing11"><span class="ingredient-amount">2 EL</span> Zucker</label>
+          <label for="ing11">
+            <span class="ingredient-amount" data-base="2" data-unit="EL">2 EL</span> 
+            Zucker
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing12">
-          <label for="ing12"><span class="ingredient-amount">1 TL</span> Zimt</label>
+          <label for="ing12">
+            <span class="ingredient-amount" data-base="1" data-unit="TL">1 TL</span> 
+            Zimt
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing13">
-          <label for="ing13"><span class="ingredient-amount">1 EL</span> Speisestärke</label>
+          <label for="ing13">
+            <span class="ingredient-amount" data-base="1" data-unit="EL">1 EL</span> 
+            Speisestärke
+          </label>
         </li>
       </ul>
 
       <h3>Knusprige Streusel</h3>
       <ul class="ingredient-list">
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing14">
-          <label for="ing14"><span class="ingredient-amount">200 g</span> Mehl</label>
+          <label for="ing14">
+            <span class="ingredient-amount" data-base="200" data-unit="g">200 g</span> 
+            Mehl
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing15">
-          <label for="ing15"><span class="ingredient-amount">100 g</span> Zucker (½ weiß, ½ braun)</label>
+          <label for="ing15">
+            <span class="ingredient-amount" data-base="100" data-unit="g">100 g</span> 
+            Zucker (½ weiß, ½ braun)
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing16">
-          <label for="ing16"><span class="ingredient-amount">100 g</span> <strong>kalte</strong> Butter (in Würfeln)</label>
+          <label for="ing16">
+            <span class="ingredient-amount" data-base="100" data-unit="g">100 g</span> 
+            <strong>kalte</strong> Butter (in Würfeln)
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing17">
-          <label for="ing17"><span class="ingredient-amount">1 EL</span> Hartweizengrie</label>
+          <label for="ing17">
+            <span class="ingredient-amount" data-base="1" data-unit="EL">1 EL</span> 
+            Hartweizengrie
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing18">
-          <label for="ing18"><span class="ingredient-amount">2 EL</span> gehackte Mandeln oder Haselnüsse</label>
+          <label for="ing18">
+            <span class="ingredient-amount" data-base="2" data-unit="EL">2 EL</span> 
+            gehackte Mandeln oder Haselnüsse
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing19">
-          <label for="ing19"><span class="ingredient-amount">1 TL</span> Zimt</label>
+          <label for="ing19">
+            <span class="ingredient-amount" data-base="1" data-unit="TL">1 TL</span> 
+            Zimt
+          </label>
         </li>
-        <li>
+        <li onclick="toggleIngredient(this)">
           <input type="checkbox" id="ing20">
-          <label for="ing20"><span class="ingredient-amount">1 Prise</span> Salz</label>
+          <label for="ing20">
+            <span class="ingredient-amount" data-base="1" data-unit="Prise">1 Prise</span> 
+            Salz
+          </label>
         </li>
       </ul>
+      
+      <div class="progress-container">
+        <div class="progress-bar" id="ingredientProgress"></div>
+      </div>
+      <p style="text-align: center; font-size: 0.9rem; color: #666;">
+        <span id="checkedCount">0</span> von <span id="totalCount">20</span> Zutaten bereit
+      </p>
     </section>
 
     <section>
-      <figure>
+      <figure onclick="openLightbox(this)">
         <img src="https://images.unsplash.com/photo-1577805947697-89e18249d767?q=80&w=1080&auto=format&fit=crop" alt="Frische Äpfel auf Holzbrett" loading="lazy" />
-        <figcaption>Backfeste Sorten wie Boskop oder Elstar eignen sich am besten.</figcaption>
+        <figcaption>🔍 Backfeste Sorten wie Boskop oder Elstar eignen sich am besten.</figcaption>
       </figure>
-      <figure style="margin-top:1rem">
+      <figure onclick="openLightbox(this)" style="margin-top:1rem">
         <img src="https://images.unsplash.com/photo-1587397845856-1b5e5300f3b7?q=80&w=1080&auto=format&fit=crop" alt="Knusprige Streusel in der Schüssel" loading="lazy" />
-        <figcaption>Kalte Butter, kurzer Mix: grobe Streusel = mehr Crunch.</figcaption>
+        <figcaption>🔍 Kalte Butter, kurzer Mix: grobe Streusel = mehr Crunch.</figcaption>
       </figure>
-      <figure style="margin-top:1rem">
+      <figure onclick="openLightbox(this)" style="margin-top:1rem">
         <img src="https://images.unsplash.com/photo-1514511547117-f9c3e6c0df1b?q=80&w=1080&auto=format&fit=crop" alt="Apfelkuchen vom Blech mit Streuseln" loading="lazy" />
-        <figcaption>Goldbraun backen, dann kurz im offenen Ofen ruhen lassen.</figcaption>
+        <figcaption>🔍 Goldbraun backen, dann kurz im offenen Ofen ruhen lassen.</figcaption>
       </figure>
-      <p class="print-note">Hinweis: Bilder sind Beispielbilder (Unsplash).</p>
+      
+      <div class="timer-section">
+        <h3 style="margin-top: 0; text-align: center;">⏲️ Backzeit-Timer</h3>
+        <div class="timer-display" id="timerDisplay">00:00</div>
+        <div class="timer-buttons">
+          <button class="timer-btn" onclick="setTimer(35)">35 Min</button>
+          <button class="timer-btn" onclick="setTimer(40)">40 Min</button>
+          <button class="timer-btn" onclick="startTimer()">▶️ Start</button>
+          <button class="timer-btn stop" onclick="stopTimer()">⏹️ Stop</button>
+        </div>
+      </div>
     </section>
   </div>
 
   <section>
     <h2>Zubereitung</h2>
     <ol class="steps">
-      <li><strong>Vorheizen:</strong> Ofen auf 180 °C Ober-/Unterhitze (160 °C Umluft). Backblech mit Backpapier auslegen.</li>
-      <li><strong>Rührteig:</strong> Butter, Zucker, Vanillezucker und Salz 3–4 Min. cremig schlagen. Eier einzeln unterrühren. Mehl mit Backpulver mischen und abwechselnd mit der <strong>handwarmen</strong> Milch einrühren. Teig gleichmäßig aufs Blech streichen.</li>
-      <li><strong>Äpfel:</strong> Schälen, entkernen, in ca. 0,8 cm Spalten schneiden, mit Zitronensaft mischen. Zucker, Zimt & Stärke zugeben, vermengen und dicht auf dem Teig verteilen.</li>
-      <li><strong>Streusel:</strong> Mehl, Zucker, Grieß, Nüsse, Zimt & Salz mischen. Kalte Butter kurz einarbeiten, bis grobe Streusel entstehen. <strong>10–15 Min. kühlen</strong>. Auf den Äpfeln verteilen.</li>
-      <li><strong>Backen:</strong> Im <strong>oberen Drittel</strong> ca. 35–40 Min. backen, bis die Streusel goldbraun sind. Bei zu schneller Bräunung tiefer schieben oder locker mit Alufolie abdecken.</li>
-      <li><strong>Abkühlen:</strong> Ofen ausschalten, Kuchen <strong>5–10 Min. bei geöffneter Tür</strong> ruhen lassen. Vollständig auskühlen, vor dem Servieren mit Puderzucker bestäuben.</li>
+      <li onclick="toggleStep(this)">
+        <strong>Vorheizen:</strong> Ofen auf 180 °C Ober-/Unterhitze (160 °C Umluft). Backblech mit Backpapier auslegen.
+      </li>
+      <li onclick="toggleStep(this)">
+        <strong>Rührteig:</strong> Butter, Zucker, Vanillezucker und Salz 3–4 Min. cremig schlagen. Eier einzeln unterrühren. Mehl mit Backpulver mischen und abwechselnd mit der <strong>handwarmen</strong> Milch einrühren. Teig gleichmäßig aufs Blech streichen.
+      </li>
+      <li onclick="toggleStep(this)">
+        <strong>Äpfel:</strong> Schälen, entkernen, in ca. 0,8 cm Spalten schneiden, mit Zitronensaft mischen. Zucker, Zimt & Stärke zugeben, vermengen und dicht auf dem Teig verteilen.
+      </li>
+      <li onclick="toggleStep(this)">
+        <strong>Streusel:</strong> Mehl, Zucker, Grieß, Nüsse, Zimt & Salz mischen. Kalte Butter kurz einarbeiten, bis grobe Streusel entstehen. <strong>10–15 Min. kühlen</strong>. Auf den Äpfeln verteilen.
+      </li>
+      <li onclick="toggleStep(this)">
+        <strong>Backen:</strong> Im <strong>oberen Drittel</strong> ca. 35–40 Min. backen, bis die Streusel goldbraun sind. Bei zu schneller Bräunung tiefer schieben oder locker mit Alufolie abdecken.
+      </li>
+      <li onclick="toggleStep(this)">
+        <strong>Abkühlen:</strong> Ofen ausschalten, Kuchen <strong>5–10 Min. bei geöffneter Tür</strong> ruhen lassen. Vollständig auskühlen, vor dem Servieren mit Puderzucker bestäuben.
+      </li>
     </ol>
   </section>
 
@@ -477,13 +1165,409 @@
       <li>Streusel kühlen → maximaler Crunch</li>
       <li>Für Extraglanz: In den letzten 5 Min. 2 EL geschmolzene Butter über die Streusel träufeln</li>
       <li>Am besten frisch, bleibt aber 2 Tage saftig und knusprig</li>
-      <li>Tipp: Mit Vanilleeis oder Sahne servieren</li>
+      <li>Mit Vanilleeis oder frisch geschlagener Sahne servieren</li>
+      <li>Apfelscheiben in Fächerform anordnen für schöne Optik</li>
     </ul>
   </section>
+
+  <div class="notes-section">
+    <h3>📝 Meine Notizen</h3>
+    <textarea class="notes-textarea" id="userNotes" placeholder="Hier können Sie eigene Notizen zum Rezept eintragen..." onchange="saveNotes()"></textarea>
+  </div>
+
+  <div class="rating">
+    <h3>Wie hat's geschmeckt?</h3>
+    <div class="stars" id="stars">
+      <span onclick="setRating(1)">☆</span>
+      <span onclick="setRating(2)">☆</span>
+      <span onclick="setRating(3)">☆</span>
+      <span onclick="setRating(4)">☆</span>
+      <span onclick="setRating(5)">☆</span>
+    </div>
+    <div class="rating-text" id="ratingText">Noch nicht bewertet</div>
+  </div>
 </main>
 
 <footer>
   <p>© Rezept für den Privatgebrauch | <a href="#main">Nach oben ↑</a></p>
+  <p style="margin-top: 1rem; font-size: 0.85rem;">
+    <a href="https://github.com/whytee92/Rezepte" target="_blank">GitHub</a> | 
+    <a href="javascript:void(0)" onclick="generateQR()">QR-Code</a> | 
+    <a href="javascript:void(0)" onclick="toggleDarkMode()">🌙 Dark Mode</a>
+  </p>
 </footer>
+
+<!-- Lightbox for images -->
+<div class="lightbox" id="lightbox">
+  <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+// Initialize on page load
+window.addEventListener('load', function() {
+  // Hide loader
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+  }, 500);
+  
+  // Load saved data
+  loadSavedData();
+  updateIngredientProgress();
+  
+  // Register service worker for PWA
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed'));
+  }
+});
+
+// Servings Calculator
+let currentServings = 16;
+const baseServings = 16;
+
+function changeServings(delta) {
+  const newServings = currentServings + delta;
+  if (newServings >= 4 && newServings <= 40) {
+    currentServings = newServings;
+    document.getElementById('servings').textContent = currentServings;
+    updateIngredientAmounts();
+    showToast(`Rezept angepasst für ${currentServings} Portionen`);
+  }
+}
+
+function updateIngredientAmounts() {
+  const ratio = currentServings / baseServings;
+  const amounts = document.querySelectorAll('.ingredient-amount');
+  
+  amounts.forEach(el => {
+    const base = parseFloat(el.dataset.base);
+    const unit = el.dataset.unit;
+    
+    if (!isNaN(base)) {
+      let newAmount = base * ratio;
+      
+      // Round appropriately
+      if (newAmount < 1) {
+        newAmount = Math.round(newAmount * 10) / 10;
+      } else if (newAmount < 10) {
+        newAmount = Math.round(newAmount * 2) / 2;
+      } else {
+        newAmount = Math.round(newAmount);
+      }
+      
+      // Special handling for fractions
+      if (base === 0.5 && unit === "") {
+        el.textContent = newAmount === 0.5 ? "½" : 
+                        newAmount === 1 ? "1" : 
+                        newAmount === 1.5 ? "1½" : 
+                        newAmount + "";
+      } else {
+        el.textContent = newAmount + (unit ? " " + unit : "");
+      }
+    }
+  });
+}
+
+// Timer functionality
+let timerInterval;
+let timerSeconds = 0;
+
+function setTimer(minutes) {
+  timerSeconds = minutes * 60;
+  updateTimerDisplay();
+  showToast(`Timer auf ${minutes} Minuten gesetzt`);
+}
+
+function startTimer() {
+  if (timerSeconds === 0) {
+    setTimer(35);
+  }
+  
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (timerSeconds > 0) {
+      timerSeconds--;
+      updateTimerDisplay();
+      
+      if (timerSeconds === 0) {
+        clearInterval(timerInterval);
+        showToast('⏰ Backzeit abgelaufen!');
+        playSound();
+      }
+    }
+  }, 1000);
+  
+  showToast('Timer gestartet');
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerSeconds = 0;
+  updateTimerDisplay();
+  showToast('Timer gestoppt');
+}
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(timerSeconds / 60);
+  const seconds = timerSeconds % 60;
+  document.getElementById('timerDisplay').textContent = 
+    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function playSound() {
+  // Simple beep using Web Audio API
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator = audioContext.createOscillator();
+  oscillator.frequency.value = 800;
+  oscillator.connect(audioContext.destination);
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime + 0.5);
+}
+
+// Ingredient tracking
+function toggleIngredient(li) {
+  const checkbox = li.querySelector('input[type="checkbox"]');
+  checkbox.checked = !checkbox.checked;
+  updateIngredientProgress();
+  saveData();
+}
+
+function updateIngredientProgress() {
+  const checkboxes = document.querySelectorAll('.ingredient-list input[type="checkbox"]');
+  const checked = document.querySelectorAll('.ingredient-list input[type="checkbox"]:checked').length;
+  const total = checkboxes.length;
+  
+  document.getElementById('checkedCount').textContent = checked;
+  document.getElementById('totalCount').textContent = total;
+  
+  const percentage = (checked / total) * 100;
+  document.getElementById('ingredientProgress').style.width = percentage + '%';
+  
+  if (checked === total && total > 0) {
+    showToast('🎉 Alle Zutaten bereit!');
+  }
+}
+
+// Step tracking
+function toggleStep(step) {
+  step.classList.toggle('completed');
+  saveData();
+  
+  const steps = document.querySelectorAll('.steps li');
+  const completed = document.querySelectorAll('.steps li.completed').length;
+  
+  if (completed === steps.length) {
+    showToast('🎂 Kuchen fertig! Guten Appetit!');
+  }
+}
+
+// Image lightbox
+function openLightbox(figure) {
+  const img = figure.querySelector('img');
+  document.getElementById('lightboxImg').src = img.src;
+  document.getElementById('lightbox').classList.add('active');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+
+// Rating system
+let currentRating = 0;
+
+function setRating(rating) {
+  currentRating = rating;
+  const stars = document.querySelectorAll('.stars span');
+  
+  stars.forEach((star, index) => {
+    if (index < rating) {
+      star.textContent = '★';
+      star.classList.add('active');
+    } else {
+      star.textContent = '☆';
+      star.classList.remove('active');
+    }
+  });
+  
+  const texts = ['', 'Naja...', 'Okay', 'Gut', 'Sehr gut!', 'Perfekt! 😍'];
+  document.getElementById('ratingText').textContent = texts[rating];
+  
+  saveData();
+  showToast(`Bewertung: ${rating} Sterne`);
+}
+
+// Notes
+function saveNotes() {
+  const notes = document.getElementById('userNotes').value;
+  localStorage.setItem('recipeNotes', notes);
+  showToast('Notizen gespeichert');
+}
+
+// Share functionality
+async function shareRecipe() {
+  const shareData = {
+    title: 'Apfel-Streusel-Blechkuchen Rezept',
+    text: 'Schau dir dieses leckere Rezept an!',
+    url: window.location.href
+  };
+  
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+    } else {
+      // Fallback: Copy to clipboard
+      await navigator.clipboard.writeText(window.location.href);
+      showToast('Link in Zwischenablage kopiert!');
+    }
+  } catch (err) {
+    console.log('Share failed:', err);
+  }
+}
+
+// Text-to-speech
+function speakRecipe() {
+  if ('speechSynthesis' in window) {
+    const text = 'Apfel-Streusel-Blechkuchen. ' + 
+                document.querySelector('.byline').textContent + '. ' +
+                'Schauen Sie auf den Bildschirm für die Zutaten und Zubereitung.';
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'de-DE';
+    speechSynthesis.speak(utterance);
+    showToast('🔊 Vorlesen gestartet');
+  } else {
+    showToast('Vorlesen nicht unterstützt');
+  }
+}
+
+// QR Code generation
+function generateQR() {
+  const url = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.href)}`;
+  window.open(url, '_blank');
+}
+
+// Dark mode toggle
+function toggleDarkMode() {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  localStorage.setItem('darkMode', isDark);
+  showToast(isDark ? '🌙 Dark Mode aktiviert' : '☀️ Light Mode aktiviert');
+}
+
+// Toast notifications
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+// Save and load data
+function saveData() {
+  const data = {
+    checkboxes: Array.from(document.querySelectorAll('.ingredient-list input[type="checkbox"]')).map(cb => cb.checked),
+    steps: Array.from(document.querySelectorAll('.steps li')).map(step => step.classList.contains('completed')),
+    rating: currentRating,
+    servings: currentServings
+  };
+  
+  localStorage.setItem('recipeData', JSON.stringify(data));
+}
+
+function loadSavedData() {
+  // Load recipe data
+  const savedData = localStorage.getItem('recipeData');
+  if (savedData) {
+    const data = JSON.parse(savedData);
+    
+    // Restore checkboxes
+    const checkboxes = document.querySelectorAll('.ingredient-list input[type="checkbox"]');
+    data.checkboxes?.forEach((checked, index) => {
+      if (checkboxes[index]) {
+        checkboxes[index].checked = checked;
+      }
+    });
+    
+    // Restore steps
+    const steps = document.querySelectorAll('.steps li');
+    data.steps?.forEach((completed, index) => {
+      if (steps[index] && completed) {
+        steps[index].classList.add('completed');
+      }
+    });
+    
+    // Restore rating
+    if (data.rating) {
+      setRating(data.rating);
+    }
+    
+    // Restore servings
+    if (data.servings && data.servings !== 16) {
+      currentServings = 16;
+      changeServings(data.servings - 16);
+    }
+  }
+  
+  // Load notes
+  const savedNotes = localStorage.getItem('recipeNotes');
+  if (savedNotes) {
+    document.getElementById('userNotes').value = savedNotes;
+  }
+  
+  // Load dark mode preference
+  if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+}
+
+// PWA install prompt
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // Show install button
+  const installBtn = document.createElement('button');
+  installBtn.textContent = '📲 Als App installieren';
+  installBtn.className = 'btn';
+  installBtn.style.background = '#4CAF50';
+  installBtn.onclick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        showToast('App wird installiert...');
+      }
+      deferredPrompt = null;
+      installBtn.remove();
+    }
+  };
+  
+  document.querySelector('.action-buttons').appendChild(installBtn);
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  // Ctrl/Cmd + P for print
+  if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+    e.preventDefault();
+    window.print();
+  }
+  
+  // Ctrl/Cmd + S for save
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    saveData();
+    showToast('✅ Fortschritt gespeichert');
+  }
+});
+</script>
 </body>
 </html>
